@@ -21,3 +21,11 @@
 
 
 # Bibliography
+
+### [1] S. Pandey, P. Dwivedy, S. Meena and A. Potnis, "A survey on key frame extraction methods of a MPEG video," 2017 International Conference on Computing, Communication and Automation (ICCCA), Greater Noida, 2017, pp. 1192-1196, doi: 10.1109/CCAA.2017.8229979.
+
+### [2] Bommisetty, R. M., Prakash, O., & Khare, A. (2019). Keyframe extraction using Pearson correlation coefficient and color moments. Multimedia Systems, 1-33.
+
+### [3] G.L. Priya, S. Domnic Shot based keyframe extraction for ecological video indexing and retrieval Ecological Inform., 23 (2014), pp. 107-117.
+
+
