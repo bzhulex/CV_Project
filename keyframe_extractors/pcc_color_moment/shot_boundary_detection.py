@@ -112,12 +112,12 @@ def color_moment_mean(grayscale_hist):
 
     return mean 
 
-def color_moment_std_dev(grayscale_hist)
+def color_moment_std(grayscale_hist)
     """
     Computes the color moment standard deviation as given in equation 3 on page 272 in the paper
 
     input: 
-    - grayscale_hist: ndarray of shape (256, )
+    - grayscale_hist: ndarray of shape (256, ) ; a grayscale histogram of a single frames
 
     outpus:
     - cm_std: float value for the color moment standard deviation
@@ -128,14 +128,59 @@ def color_moment_std_dev(grayscale_hist)
 
     cm_mean = color_moment_mean(grayscale_hist)
     Gm_diff_squared = np.square(color_levels - cm_mean)
-    summation = Gm_diff_squared * grayscale_hist
+    summation = np.sum(Gm_diff_squared * grayscale_hist)
 
     cm_std = np.sqrt((1 / (N - 1)) * summation)
 
     return cm_std
 
 def color_moment_skewness(grayscale_hist):
-    pass
+    """
+    Computes the color moment skewness for a frame as given in equation 4 on page 272 in the paper
+
+    input:
+    - grayscale_hist: ndarray of shape (256, ) ; a grayscale histogram of a single frame
+
+    output:
+    - skewness: float value for the color moment skewness of a single frame
+    """
+    N = np.sum(grayscale_hist)
+    color_levels = np.arange(256)
+
+    cm_mean = color_moment_mean(grayscale_hist)
+    Gm_diff_cubed = np.power(color_levels - cm_mean, 3)
+    summation = np.sum(Gm_diff_cubed * grayscale_hist)
+
+    cm_std = color_moment_std(grayscale_hist)
+    cm_std_cubed = cm_std ** 3
+    skewness = (1 / ((N - 1) * cm_std_cubed)) * summation 
+
+    return skewness
+
+def color_moment_kurtosis(grayscale_hist):
+    """
+    Computes the color moment kurtosis for a frame as given in equation 5 on page 272 in the paper
+
+    input:
+    - grayscale_hist: ndarray of shape (256, ) ; a grayscale histogram of a single frame
+
+    output:
+    - kurtosis: float value for the color moment kurtosis of a single frame
+    """
+    N = np.sum(grayscale_hist)
+    color_levels = np.arange(256)
+
+    cm_mean = color_moment_mean(grayscale_hist)
+    Gm_diff_quartic = np.power(color_levels - cm_mean, 4)
+    summation = np.sum(Gm_diff_quartic * grayscale_hist)
+
+    cm_std = color_moment_std(grayscale_hist)
+    cm_std_quartic = cm_std ** 4
+    kurtosis = (1 / ((N - 1) * cm_std_quartic)) * summation
+
+    return kurtosis
+
+
 
 
 
