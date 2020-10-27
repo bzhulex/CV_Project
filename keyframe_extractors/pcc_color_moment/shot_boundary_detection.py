@@ -1,6 +1,6 @@
 # Authors: Garrison Ramey
 # Date: 2020-10-25
-# Time: 10:47 EDT
+# Time: 10:47 PM EDT
 
 import numpy as np
 
