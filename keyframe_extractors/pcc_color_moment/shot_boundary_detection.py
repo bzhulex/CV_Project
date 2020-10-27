@@ -156,7 +156,7 @@ def color_moment_mean(grayscale_hist):
 
     return mean 
 
-def color_moment_std(grayscale_hist)
+def color_moment_std(grayscale_hist):
     """
     Computes the color moment standard deviation
 
