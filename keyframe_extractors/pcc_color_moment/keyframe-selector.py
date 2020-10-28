@@ -217,9 +217,9 @@ if __name__ == "__main__":
     ap.add_argument("-fd", help="absolute path to the directory containing the video frames")
     ap.add_argument("-sd", help="path to directory to save the selected keyframes")
     args = ap.parse_args()
-    frames_dir, save_dir = handle_args(args)
+    frames_dir, save_dir, frame_type = handle_args(args)
 
-    select_keyframes(frames_dir=frames_dir, save_dir=save_dir, frame_type=frame_type)
+    select_keyframes(frames_dir=frames_dir, save_dir=save_dir, frame_type="npy")
 
     finish = time()
 
