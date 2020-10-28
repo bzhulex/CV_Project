@@ -8,36 +8,43 @@ import numpy as np
 # Methods for PCC #
 ###################
 
-def channel_threshold(channel, alpha=1):
+def channel_coeff_threshold(coeff_channel, alpha=1):
     """
-    Computes the threshold for a single channel in a given frame by equation 6 on page 271 of the paper
+    Computes the threshold for a single channel of coeffs in a given frame by equation 6 on page 271 of the paper
 
     Parameters
     ----------
     channel: ndarray of shape (N, ) 
-        represents a red, blue, or green color channel of a frame
+        represents the coefficients red, blue, or green color channel of a frame
     alpha: float 
         A hyperparameter between 0 and 1
 
     Returns
     -------
     threshold: float 
-        represents the color threshold for a channel in frame
+        represents the color threshold for a single channel in frame
 
     Notes
     -----
-    Given in equation 6 on page 273 in the paper
+    Given in equation 6 on page 273 in the paper.
     """
 
-    if len(channel.shape) != 1:
+    if len(coeff_channel.shape) != 1:
         raise ValueError("The channel has the incorrect shape. It must be (N, )")
 
-    mu = np.mean(channel)
-    variance = np.var(channel)
+    mu = np.mean(coeff_channel)
+    variance = np.var(coeff_channel)
     # Equation 6 on page 271 of the paper
     threshold = mu + (alpha * variance)
 
     return threshold
+
+def coeff_indices_below_threshold(coeff_channel, threshold):
+    """
+    Documentation needed.
+    Returns the indices of the coeff_channels that are less than a given threshold
+    """
+    return np.where(coeff_channel < threshold)[0]
 
 def channel_correlation_coefficient(channel_1, channel_2):
     """
@@ -323,6 +330,24 @@ def color_moment_threshold(cm_difference_arr, alpha=1):
     threshold = alpha * mu 
 
     return threshold
+
+def color_moment_indices_above_threshold(cm_diff, threshold):
+    """
+    Computes all the indices of cm_diff that exceed threshold
+
+    Parameters
+    ----------
+    cm_diff: array of shape(N, )
+        The color moment difference array for a single feature of the color moment
+    threshold: float
+        The threshold for a particular cm feature
+    
+    Returns
+    -------
+    thresh_indices: array of type int and shape (M, )
+    """
+
+    return np.where(cm_diff > threshold)[0]
 
 
 
