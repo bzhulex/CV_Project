@@ -4,13 +4,14 @@
 
 import sys
 from os.path import isdir, join
-from os import listdir
+from os import listdir, chdir
 from glob import glob
 import numpy as np
 import shot_boundary_detection as sbd
 from argparse import ArgumentParser
 from time import time
-
+import keyframe_image_display as kid
+import matplotlib.pyplot as plt
 frames_dir = None
 
 
@@ -24,7 +25,7 @@ def handle_args(args):
     """
     frames_dir = args.fd 
     save_dir = args.sd 
-    if frames_path == None or save_path == None:
+    if frames_dir == None or save_dir == None:
         print("You must specify the absolute path to the video frames (-fp)" \
               " and the absolute path to the directory you wish to save the keyframes (-sp)")
         sys.exit(0)
@@ -40,6 +41,7 @@ def handle_args(args):
               " Please provide a valid path.")
         sys.exit(0)
     # Check that there are only frames in the directory and all have the same type
+    frame_type = "npy"
     return frames_dir, save_dir, frame_type
 
 def apply_PCC_thresholds(red_coeffs, green_coeffs, blue_coeffs):
@@ -86,7 +88,7 @@ def apply_CM_thresholds(cm_means, cm_stds, cm_skews, cm_kurtoses):
     cm_skews_indices = sbd.color_moment_indices_above_threshold(cm_skews_diff, cm_skews_threshold) + 1
     cm_kurtoses_indices = sbd.color_moment_indices_above_threshold(cm_kurtoses_diff, cm_kurtoses_threshold) + 1
 
-    all_indices_above_threshhold = np.hstack((cm_means_indices, cm_stds_indices, cm_skews_indices, cm_kurtoses_indices))
+    all_indices_above_threshold = np.hstack((cm_means_indices, cm_stds_indices, cm_skews_indices, cm_kurtoses_indices))
     all_indices_above_threshold = np.unique(all_indices_above_threshold)
 
     return all_indices_above_threshold
@@ -183,10 +185,11 @@ def select_keyframes(frame_dir, save_dir, frame_type="npy"):
         # Color Moment
         grayscale = sbd.rgb2gray(frame1)
         grayscale_hist = sbd.grayscale_histogram(grayscale)
+
         cm_mean = sbd.color_moment_mean(grayscale_hist)
         cm_std = sbd.color_moment_std(grayscale_hist)
         cm_skew = sbd.color_moment_skewness(grayscale_hist)
-        cm_kurtosis = sbd.color_moment_kurtosis(grayscal_hist)
+        cm_kurtosis = sbd.color_moment_kurtosis(grayscale_hist)
 
         cm_means = np.hstack((cm_means, cm_mean))
         cm_stds = np.hstack((cm_stds, cm_std))
@@ -196,19 +199,55 @@ def select_keyframes(frame_dir, save_dir, frame_type="npy"):
     PCC_shot_indices = apply_PCC_thresholds(red_coeffs, green_coeffs, blue_coeffs)
     CM_shot_indices = apply_CM_thresholds(cm_means, cm_stds, cm_skews, cm_kurtoses)
 
-    all_shot_indices = np.sort(np.unique(np.hstack(PCC_shot_indices, CM_shot_indices)))
+
+    all_shot_indices = np.intersect1d(PCC_shot_indices, CM_shot_indices)
+
+    #kid.pick_images(all_shot_indices)
+
+
+    #all_shot_indices = np.sort(np.unique(np.hstack((PCC_shot_indices, CM_shot_indices))))
 
     keyframe_indices = get_keyframes_from_shots(all_shot_indices, cm_means, cm_stds)
 
     # Change to save directory to save keyframes
     chdir(save_dir)
     for keyframe_index in keyframe_indices:
-        kf_file_name = all_frame_files[keyframe_index]
+        kf_file_name = all_frame_files[int(keyframe_index)]
         # save the keyframe file to the save directory here
-        kf = np.load(join(frames_dir, kf_file_name))
+        kf = np.load(join(frame_dir, kf_file_name))
         with open(kf_file_name, "wb") as f:
             np.save(f, kf)
 
+    histogram, bin_edges = np.histogram(all_shot_indices, bins=20)
+    list_of_images = []
+    #print(len(bin_edges))
+    for i in range(len(bin_edges) - 1):
+        list_of_images.append(int(bin_edges[i]))
+
+    r = 4
+    c = 5
+
+    fig = plt.figure()
+    count = 1
+
+    for i in range(len(list_of_images)):
+        img = np.load(join(frame_dir, all_frame_files[int(list_of_images[i])]))
+        ax = fig.add_subplot(r, c, count)
+        ax.axis('off')
+        ax.imshow(img)
+        count += 1
+
+
+    plt.savefig("top_20_images.png")
+
+    # with open("vid3_ chosen_keyframes.npy", "wb") as f:
+    #     np.save("vid3_ chosen_keyframes.npy", list_of_images)
+
+
+    plt.show()
+
+
+    print(bin_edges)
 
 if __name__ == "__main__":
     start = time()
@@ -219,7 +258,7 @@ if __name__ == "__main__":
     args = ap.parse_args()
     frames_dir, save_dir, frame_type = handle_args(args)
 
-    select_keyframes(frames_dir=frames_dir, save_dir=save_dir, frame_type="npy")
+    select_keyframes(frame_dir=frames_dir, save_dir=save_dir, frame_type="npy")
 
     finish = time()
 

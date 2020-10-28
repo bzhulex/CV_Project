@@ -152,9 +152,13 @@ def color_moment_mean(grayscale_hist):
     -----
     Given in equation 2 on page 272 in the paper
     """
+    #print(grayscale_hist.shape[0])
 
-    if len(grayscale_hist) != 1 or grayscale_hist.shape[0] != 256:
+    if grayscale_hist.shape[0] != 256:
         raise ValueError("The histogram has the incorrect shape. It must be (N, )")
+
+    # if len(grayscale_hist) != 1 or grayscale_hist.shape[0] != 256:
+    #     raise ValueError("The histogram has the incorrect shape. It must be (N, )")
 
     # sum of grayscale_hist gives total number of pixels, which is N
     N = np.sum(grayscale_hist)
@@ -183,8 +187,10 @@ def color_moment_std(grayscale_hist):
     -----
     Given in equation 3 on page 272 in the paper
     """
-    if len(grayscale_hist) != 1 or grayscale_hist.shape[0] != 256:
+    if grayscale_hist.shape[0] != 256:
         raise ValueError("The histogram has the incorrect shape. It must be (N, )")
+    # if len(grayscale_hist) != 1 or grayscale_hist.shape[0] != 256:
+    #     raise ValueError("The histogram has the incorrect shape. It must be (N, )")
 
     # sum of grayscale_hist gives total number of pixels, which is N
     N = np.sum(grayscale_hist)
@@ -216,8 +222,10 @@ def color_moment_skewness(grayscale_hist):
     -----
     Given in equation 4 on page 272 in the paper
     """
-    if len(grayscale_hist) != 1 or grayscale_hist.shape[0] != 256:
+    if grayscale_hist.shape[0] != 256:
         raise ValueError("The histogram has the incorrect shape. It must be (N, )")
+    # if len(grayscale_hist) != 1 or grayscale_hist.shape[0] != 256:
+    #     raise ValueError("The histogram has the incorrect shape. It must be (N, )")
     
     N = np.sum(grayscale_hist)
     color_levels = np.arange(256)
@@ -250,8 +258,10 @@ def color_moment_kurtosis(grayscale_hist):
     -----
     Given in equation 5 on page 272 in the paper
     """
-    if len(grayscale_hist) != 1 or grayscale_hist.shape[0] != 256:
+    if grayscale_hist.shape[0] != 256:
         raise ValueError("The histogram has the incorrect shape. It must be (N, )")
+    # if len(grayscale_hist) != 1 or grayscale_hist.shape[0] != 256:
+    #     raise ValueError("The histogram has the incorrect shape. It must be (N, )")
 
     N = np.sum(grayscale_hist)
     color_levels = np.arange(256)
