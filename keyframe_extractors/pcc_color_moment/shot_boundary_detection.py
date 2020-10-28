@@ -79,7 +79,9 @@ def channel_correlation_coefficient(channel_1, channel_2):
     var_2 = cov_matrix[1][1]
 
     # Equation 1 given on page 271 in the paper
-    coeff = (1 / (var_1 * var_2)) * cov
+    std_1 = np.sqrt(var_1)
+    std_2 = np.sqrt(var_2)
+    coeff = (1 / (std_1 * std_1)) * cov
 
     return coeff 
 
