@@ -50,9 +50,9 @@ def apply_PCC_thresholds(red_coeffs, green_coeffs, blue_coeffs):
     green_threshold = sbd.channel_coeff_threshold(green_coeffs)
     blue_threshold = sbd.channel_coeff_threshold(blue_coeffs)
 
-    red_indices = sbd.coeff_indices_below_threshold(red_coeffs, red_threshold)
-    green_indices = sbd.coeff_indices_below_threshold(green_coeffs, green_threshold)
-    blue_indices = sbd.coeff_indices_below_threshold(blue_coeffs, blue_threshold)
+    red_indices = sbd.coeff_indices_below_threshold(red_coeffs, red_threshold) + 1
+    green_indices = sbd.coeff_indices_below_threshold(green_coeffs, green_threshold) + 1
+    blue_indices = sbd.coeff_indices_below_threshold(blue_coeffs, blue_threshold) + 1
 
     all_indices_below_threshold = np.hstack((red_indices, green_indices, blue_indices))
     all_indices_below_threshold = np.unique(all_indices_below_threshold)
