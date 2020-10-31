@@ -10,21 +10,44 @@ Time: 3:19 PM EDT
     <title>Project Update</title>
     <style>
       body {
-        background-color: #D7EEFF;
+        /*background-color: #EAF4FF;*/
+        background-color: #FFFFFF;
+      }
+      hr {
+        background-color: black;
       }
     </style>
+    <!--- MathJax --->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+      });
+    </script>
+    <script type="text/javascript" async
+      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML">
+    </script>
   </head>
   <body>
+    
     <center>
     <h1>Video Shot Boundary Detection and Keyframe Extraction</h1>
     <h3>Garrison Ramey, Alex Karwoski, Brian Zhu, Taylan Selman</h3>
     <h3> Fall 2020 </h3>
     </center>
+    <br>
     <hr>
+    <br>
     <!--- Abstract --->
     <center><h3>Abstract</h3></center>
       <p>
-        { Abstract Here }
+        As the amount of video content available and consumed on social media platforms has grown 
+        exponentially in the past decade, so has the necessity for classifying and summarizing videos with 
+        high accuracy. The goal of this project is to survey and analyze two state-of-the-art keyframe 
+        extraction techniques on multiple public video datasets and compare their performance. We will 
+        use the keyframe annotations in the dataset as the ground truth keyframes in order to compute 
+        the accuracy, recall, precision, and figure of merit (F-score) score for each method. We expect 
+        our experiments to show successful keyframe selection by producing visual representations that 
+        accurately summarize each video and good quantitative results.
       </p>
     <br>
     <hr>
@@ -32,7 +55,9 @@ Time: 3:19 PM EDT
     <!--- Teaser Figure --->
     <center><h3> Teaser Figure </h3></center>
       <p> 
-        { Teaser Figure Here }
+        <center>
+          <img src="./images/teaser-figure.png" style="border: 5px solid;">
+        </center>
       </p>
     <br>
     <hr>
@@ -40,7 +65,18 @@ Time: 3:19 PM EDT
     <!--- Introduction --->
     <center><h3> Introduction </h3></center>
       <p>
-        { Introduction Here }
+        A key tool for real-time video processing is keyframe extraction. Keyframe extraction seeks to 
+        search for frames that best represent the content of each shot or best represent the scene in the 
+        video clip . The main processing of keyframe extraction is shot segmentation. Shot segmentation 
+        involves detecting the transition between successive shots.
+      </p>
+      <p>
+        We will implement a detection-based keyframe extraction algorithm based on a combination of two 
+        features: the Pearson correlation coefficient (PCC) and color moments (CM). The second method we 
+        will be using is non-sequential called Edge Aware Clustering, meaning that instead of directly 
+        comparing consecutive frames to detect a keyframe, the frames will first be clustered into different 
+        shots (a collection of frames). We will test both of these approaches on color image frames with 
+        differing actions to determine the more accurate methods. 
       </p>
     <br>
     <hr>
@@ -48,8 +84,77 @@ Time: 3:19 PM EDT
     <!--- Approach --->
     <center><h3> Approach </h3></center>
       <p>
-        { Approach Here }
+        The first approach we used exploited Pearson correlation coefficients (PCC) and color moments 
+        (CM) based on the research by Bommisetty et al. [2]. The linear transformation invariance property 
+        of PCC facilitates the proposed algorithm to work well under varying lighting conditions. On the 
+        other hand, the scale and rotation invariance properties of color moments are beneficial for 
+        representation of complex objects that may be present in different poses and orientation.
       </p>
+      <p>
+        In order to implement this approach, we first considered how we should use PCC to find shot boundaries. 
+        According to Bommisetty et al. [2], each color channel needed to be analyzed independently for the 
+        sequence of frames. Therefore, arrays were created for each color channel to store the PCC between 
+        all consecutive frames in the video, and the PCC between two consecutive frames, x and y, was 
+        computed according to the equation below.
+      </p>
+      <center>
+      <p>
+        $ \Gamma = \frac {\mid cov(x, y) \mid} {{\sigma_{x}}{\sigma_{y}}} $
+      </p>
+      </center>
+      <p>
+        With the PCC arrays, we then computed the threshold value, denoted as $T_{c}$, for each channel in 
+        the following equation where $\alpha$ is a hyperparameter, $\sigma_{c}$ is the variance for the color 
+        channel, and $c$ is a red, green, or blue channel.
+      </p>
+      <p>
+        <center>
+          $ T_{c} = \mu_{c} + (\alpha * \sigma_{c}^{2}) $
+        </center>
+      </p>
+      <p>
+        In total, there were three total thresholds, one for each of the three PCC arrays. Using the 
+        thresholds, we found the set of indices corresponding to specific video frames that we would use to
+         determine our final set of shot boundaries.
+      </p>
+      <p>
+        The second feature set of the video frames we utilized to find another set of potential keyframes 
+        is color moments. A color moment for a single frame is composed of four features: mean, standard 
+        deviation, skewness, and kurtosis.
+      </p>
+      <p>
+        The mean ($m$), standard deviation ($\sigma$), skewness ($S$) and kurtosis ($K$) were computed by the 
+        following equations where $N$ is the total number of frames, $M$ is the number of grayscale levels for
+        a particular frame, $G_{j}$ is the is the $jth$ gray level, and $C_{j}$ is the pixel count in 
+        grayscale-level $j$.
+      </p>
+      <center>
+        <p>$ m = \frac{1}{N} \sum\limits_{j = 1}^{M} G_{j} C_{j} $</p>
+        <p>$ \sigma = \sqrt{\frac{1}{(N - 1)} \sum\limits_{j = 1}^{M}(G_{j} - m)^{2}C_{j}} $</p>
+        <p>$ S = \frac{1}{(N - 1)\sigma^{3}} \sum\limits_{j = 1}^{M} (G_{j} - m)^{3}C_{j} $</p>
+        <p>$ K = \frac{1}{(N - 1)\sigma^{4}} \sum\limits_{j = 1}^{M} (G_{j} - m)^{4}C_{j} $</p>
+      </center>
+      <p>
+        For each frame, we stored the value of the color moment features in four separate arrays. Then the 
+        mean difference arrays for each color moment feature array were found, denoted
+        as $D_{m}$, $D_{\sigma}$, $D_{S}$, $D_{K}$, and the thresholds were computed as follows.
+      </p>
+      <center>
+          <p>$ T_{D_{m}} = \alpha * \mu_{D_{m}}$</p>
+          <p>$ T_{D_{\sigma}} = \alpha * \mu_{D_{\sigma}}$</p>
+          <p>$ T_{D_{S}} = \alpha * \mu_{D_{S}}$</p>
+          <p>$ T_{D_{K}} = \alpha * \mu_{D_{K}}$</p>
+      </center>
+      <p>
+        Using each difference threshold, we found the second set of frames that would be potential shot boundaries.
+      </p>
+      <p>
+        We found our final shot boundaries by taking the intersection of the set of boundaries found 
+        using PCC and the set found using color moments. Then, for each of the final shot boundaries, we 
+        extracted the frame with the highest color moment mean and standard deviation, and all the frames 
+        chosen were declared as keyframes for the video.
+      </p>
+
     <br>
     <hr>
     <br>
@@ -63,9 +168,27 @@ Time: 3:19 PM EDT
     <br>
     <!--- Qualitative Results --->
     <center><h3> Qualitative Results </h3></center>
-      <p>
-        { Qualitative Results Here }
-      </p>
+    <center>
+      <div>
+      <h4>Original Video</h4>
+      <video width="400" height="230" controls>
+        <source src="videos/Video03_Monkey.mp4">
+      </video>
+      </div>
+      <div>
+        <h4>Keyframes Selected</h4>
+        <img src="images/vid-3-figure.png">
+      </div>
+      <h4>Original Video</h4>
+      <video width="400" height="230" controls>
+        <source src="videos/Video17_Stockholm.mp4">
+      </video>
+      </div>
+      <div>
+        <h4>Keyframes Selected</h4>
+        <img src="images/vid-17-figure.png">
+      </div>
+    </center>
     <br>
     <hr>
     <br>
@@ -79,9 +202,9 @@ Time: 3:19 PM EDT
     <br>
     <!--- References --->
     <center><h3> References </h3></center>
-      <p>
-        { References Here }
-      </p>
+      <p>[1] S. Pandey, P. Dwivedy, S. Meena and A. Potnis, “A survey on key frame extraction methods of a MPEG video,” 2017 International Conference on Computing, Communication and Automation (ICCCA), Greater Noida, 2017, pp. 1192-1196, doi: 10.1109/CCAA.2017.8229979.</p>
+      <p>[2] Bommisetty, R. M., Prakash, O., & Khare, A. (2019). Keyframe extraction using Pearson correlation coefficient and color moments. Multimedia Systems, 1-33.</p>
+      <p>[3] G.L. Priya, S. Domnic Shot based keyframe extraction for ecological video indexing and retrieval Ecological Inform., 23 (2014), pp. 107-117.</p>
     <br>
     <hr>
     <br>
