@@ -33,6 +33,9 @@ Time: 3:19 PM EDT
     <h1>Video Shot Boundary Detection and Keyframe Extraction</h1>
     <h3>Garrison Ramey, Alex Karwoski, Brian Zhu, Taylan Selman</h3>
     <h3> Fall 2020 </h3>
+    <p>
+      <p>* If you experience any issues, please visit the live webpage <a href="https://bzhulex.github.io/CV_Project/project-update-1">here</a> *</p>
+    </p>
     </center>
     <br>
     <hr>
@@ -43,11 +46,11 @@ Time: 3:19 PM EDT
         As the amount of video content available and consumed on social media platforms has grown 
         exponentially in the past decade, so has the necessity for classifying and summarizing videos with 
         high accuracy. The goal of this project is to survey and analyze two state-of-the-art keyframe 
-        extraction techniques on multiple public video datasets and compare their performance. We will 
+        extraction techniques using multiple public video datasets and compare their performances. We will 
         use the keyframe annotations in the dataset as the ground truth keyframes in order to compute 
         the accuracy, recall, precision, and figure of merit (F-score) score for each method. We expect 
-        our experiments to show successful keyframe selection by producing visual representations that 
-        accurately summarize each video and good quantitative results.
+        our experiments to show successful keyframe selection by producing good quantitative results 
+        and visual representations that accurately summarize each video.
       </p>
     <br>
     <hr>
@@ -67,7 +70,7 @@ Time: 3:19 PM EDT
       <p>
         A key tool for real-time video processing is keyframe extraction. Keyframe extraction seeks to 
         search for frames that best represent the content of each shot or best represent the scene in the 
-        video clip . The main processing of keyframe extraction is shot segmentation. Shot segmentation 
+        video clip. The main processing of keyframe extraction is shot segmentation. Shot segmentation 
         involves detecting the transition between successive shots.
       </p>
       <p>
@@ -88,13 +91,13 @@ Time: 3:19 PM EDT
         (CM) based on the research by Bommisetty et al. [2]. The linear transformation invariance property 
         of PCC facilitates the proposed algorithm to work well under varying lighting conditions. On the 
         other hand, the scale and rotation invariance properties of color moments are beneficial for 
-        representation of complex objects that may be present in different poses and orientation.
+        representation of complex objects that may be present in different poses and orientations.
       </p>
       <p>
         In order to implement this approach, we first considered how we should use PCC to find shot boundaries. 
         According to Bommisetty et al. [2], each color channel needed to be analyzed independently for the 
         sequence of frames. Therefore, arrays were created for each color channel to store the PCC between 
-        all consecutive frames in the video, and the PCC between two consecutive frames, x and y, was 
+        all consecutive frames, and the PCC between two consecutive frames, x and y, was 
         computed according to the equation below.
       </p>
       <center>
@@ -114,18 +117,18 @@ Time: 3:19 PM EDT
       </p>
       <p>
         In total, there were three total thresholds, one for each of the three PCC arrays. Using the 
-        thresholds, we found the set of indices corresponding to specific video frames that we would use to
-         determine our final set of shot boundaries.
+        thresholds, we found the set of specific video frames that we would be used to determine the
+        final set of shot boundaries.
       </p>
       <p>
-        The second feature set of the video frames we utilized to find another set of potential keyframes 
-        is color moments. A color moment for a single frame is composed of four features: mean, standard 
-        deviation, skewness, and kurtosis.
+        To find another set of potential shot boudaries, the second feature set of the video frames 
+        we utilized is color moments. A color moment for a single frame is composed of four features: 
+        mean, standard deviation, skewness, and kurtosis.
       </p>
       <p>
         The mean ($m$), standard deviation ($\sigma$), skewness ($S$) and kurtosis ($K$) were computed by the 
         following equations where $N$ is the total number of frames, $M$ is the number of grayscale levels for
-        a particular frame, $G_{j}$ is the is the $jth$ gray level, and $C_{j}$ is the pixel count in 
+        a particular frame, $G_{j}$ is the $jth$ gray level, and $C_{j}$ is the pixel count in 
         grayscale-level $j$.
       </p>
       <center>
@@ -160,8 +163,27 @@ Time: 3:19 PM EDT
     <br>
     <!--- Experiments and Results --->
     <center><h3> Experiments and Results </h3></center>
+      <center>
+        <div>
+          <img src="images/results.png" style="border: 5px solid;">
+        </div>
+      </center>
       <p>
-        { Experiments and Results Here }
+        We tested our first keyframe extraction technique on two videos: the first shows a
+        monkey on a rock (Video 3) and the second presents the view of a city (Video 17). 
+        The dataset we used contained a set of ground-truth 
+        keyframes, to which we compared our results from the extraction method 
+        using four key metrics: accuracy, precision, recall, and F-score.  We defined 
+        accuracy as the sum of the true positives and true negatives over the sum of the true positives, 
+        true negatives, false positives, and false negatives.  With both videos, we found our methods to 
+        have relatively low accuracy, locating the correct keyframes under 50% of the time. Next, we 
+        defined precision as the number of true positives over the sum of the false and true positives.  
+        Our methods were less precise than accurate, with frame precision as low as 25% for the second video.
+        We defined recall as the number of true positives over the sum of true positives and false negatives.
+        Recall was the highest performing metric, indicating that our method did well at identifying 
+        the ground-truth key frames, if not accounting for false positives.  We also evaluated performance 
+        based on “F-score", which is equal to 2 times precision times recall over the sum of precision 
+        and recall. 
       </p>
     <br>
     <hr>
@@ -195,7 +217,15 @@ Time: 3:19 PM EDT
     <!--- Conclusion and Future Work --->
     <center><h3> Conclusion and Future Work </h3></center>
       <p>
-        { Conclusion and Future Work here }
+        As we discussed earlier, it is necessary to classify and summarize videos with high accuracy, 
+        as the amount of video content available and consumed on social media platforms has grown 
+        exponentially in the past decade. So far, our results have been fairly accurate at extracting 
+        keyframes from the videos shown above. We used the keyframe annotations in the dataset as the ground 
+        truth keyframes in order to compute the accuracy, recall, precision, and figure of merit 
+        (F-score) score for each method.  Possible routes of improvement might be to expand our datasets 
+        to longer videos to examine any differences in performance. Another idea could be to run our methods 
+        on a large selection of smaller videos and run clustering algorithms on the extracted frames to
+        attempt classification.
       </p>
     <br>
     <hr>
