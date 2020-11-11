@@ -104,7 +104,7 @@ def get_block_edge_pattern(block):
 
 def get_q_value(block):
     """
-    Finds the q value (number of pizels in a block higher than the block mean)
+    Finds the q value (number of pixels in a block higher than the block mean)
     """
 
     mean = block_mean(block)
@@ -433,13 +433,63 @@ def frame_continuity_value(diff_values):
     continuity_value: float
         The continuity value between consecutive frames
     """
-    pass
+    return np.sum(diff_values)
+    
+###########################
+# 3.3 Least Squares       #
+###########################
+
+def least_squared_error(diff_values):
+    g = diff_values * np.transpose(diff_values)
+    m = np.zeros((2, len(diff_values)))
+    m[:0] = diff_values
+    m[:1] = diff_values
+
+    m_zero = np.zeros((2, 2))
+
+    h_0 = np.concatenate((g, np.transpose(m)), axis=1)
+    h_1 = np.concatenate((m, m_zero), axis=1)
+    h = np.concatenate((h_0, h_1), axis=0)
+
+    b = h * diff_values
+
+    f = None
+    total = 0
+    for i in range(1, len(diff_values) + 1):
+        f = b[m + len(diff_values)]
+        total += np.sum(diff_values)
+
+###########################
+# 3.4 Shot Frame Clustering#
+###########################
+
+def shot_frame_clustering(diff_values):
+    delta = 5
+    d = 1
+    i = 1
+    clusters = []
+    clusters.append([diff_values[0]])
+    i += 1
+    cont_val = frame_continuity_value(diff_values)
+    while i < len(diff_values):
+        if diff_values[i] < 5:
+            clusters[d] = np.append(clusters[d], i)
+        elif len(clusters[d]) == 1:
+            clusters[d - 1] = np.append(clusters[d - 1], i)
+        elif len(clusters[d]) > 1 and len(clusters[d]) < 5:
+            l = clusters[d - i][len(clusters[d - 1]) - 1]
+            f = clusters[d][0]
+            s = clusters[d][1]
+
+            if (diff_values[f] - diff_values[l]) - (diff_values[f] - diff_values[s]) < 0.5*delta:
+                clusters[d - 1] = np.append(clusters[d], clusters[d - 1])
+                clusters[d - 1] = np.flatten(clusters[d - 1])
+                clusters[d] = np.delete(clusters, d)
+            else:
+                d += 1
+        i += 1
     
 
 
-
-
-
-    
 
 
