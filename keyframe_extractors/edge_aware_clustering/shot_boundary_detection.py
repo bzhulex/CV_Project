@@ -1,4 +1,4 @@
-# Authors: Garrison Ramey
+# Authors: Garrison Ramey, Alex Karwashki, Bzhulex
 # Date: 2020-11-02
 
 # The following methods are based on the paper by Priya and Dominic
@@ -345,7 +345,7 @@ def frame_blocks(frame_1, frame_2):
     # Consider all blocks that fit perfectly first (Region 1)
     # This array's shape[0] should be divisible by 4 with remainder 0
     perfect_blocks_1 = np.zeros(shape=(1, 4))
-    perfect_blocks_2 = np.zeros(shap=(1, 4))
+    perfect_blocks_2 = np.zeros(shape=(1, 4))
     # Split array into groups of 4 rows
     lower_row = 0
     higher_row = 4
