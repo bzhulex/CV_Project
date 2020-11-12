@@ -1,8 +1,44 @@
 # Authors: Garrison Ramey,
 # Date: 2020-11-02
 
+import sys
+from os.path import isdir, join
+from os import listdir, chdir
 import numpy as np
+from argparse import ArgumentParser
+from time import time
+import matplotlib.pyplot as plt
+
 import shot_boundary_detection as sbd
+
+def handle_args(args):
+    """
+    Handles arguments
+
+    Notes
+    -----
+    Needs to be updated to make sure all files in the frames_dir are the same type.
+    """
+    frames_dir = args.fd 
+    save_dir = args.sd 
+    if frames_dir == None or save_dir == None:
+        print("You must specify the absolute path to the video frames (-fp)" \
+              " and the absolute path to the directory you wish to save the keyframes (-sp)")
+        sys.exit(0)
+    # Check if provided paths exist on the system.
+    frames_dir_exists = isdir(frames_dir)
+    save_dir_exists = isdir(save_dir)
+    if frames_dir_exists == False:
+        print("The video frames directory provided does not exist on your system." \
+              " Please provide a valid path.")
+        sys.exit(0)
+    if save_dir_exists == False:
+        print("The save directory provided does not exist on your system." \
+              " Please provide a valid path.")
+        sys.exit(0)
+    # Check that there are only frames in the directory and all have the same type
+    frame_type = "npy"
+    return frames_dir, save_dir, frame_type
 
 ########################
 #  3.5 Keyframe Extraction  #
@@ -69,10 +105,50 @@ def keyframes_from_clusters(clusters, epsilon, delta):
     
     return keyframe_indices
 
+def select_keyframe(frame_dir, save_dir, frame_type=None, epsilon=None, delta=None):
+    """
+    Finds the keyframe indices of a full video sequence
+
+    Parameters
+    -------------
+    frame_dir: str
+        The directory in which the numpy frames exist
+    epsilon: float
+        A hyperparameter threshold to compare against the cluster variance
+    delta: float
+        A hyperparameter threshold used to determine subshot clusters
+    
+    Returns
+    ---------
+    keyframe_indices: array of type int and size (N, )
+        The keyframe indices
+    """
+    # sbd.full_sequence_diff_vals has been tested and should run without error.
+    full_sequence_diffs = sbd.full_sequnce_diff_vals(frame_dir)
+    clusters = sbd.shot_frame_clustering(full_sequence_diffs)
+    keyframe_indices = keyframes_from_clusters(clusters, epsilon, delta)
+
+    print("len keyframe indices: {}".format(len(keyframe_indices)))
+
+    return keyframe_indices
+
 
 
 if __name__ == "__main__":
-    pass
+    start = time()
+
+    ap = ArgumentParser()
+    ap.add_argument("-fd", help="absolute path to the directory containing the video frames")
+    ap.add_argument("-sd", help="path to directory to save the selected keyframes")
+    args = ap.parse_args()
+    frames_dir, save_dir, frame_type = handle_args(args)
+
+    select_keyframes(frame_dir=frames_dir, save_dir=save_dir, frame_type="npy")
+
+    finish = time()
+
+    print("Time Elapsed: {}".format(finish - start))
+
     
 
 
