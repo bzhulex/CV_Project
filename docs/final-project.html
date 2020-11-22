@@ -266,10 +266,7 @@ Time: 3:19 PM EDT
       <p>
         As we discussed earlier, it is necessary to classify and summarize videos with high accuracy, 
         as the amount of video content available and consumed on social media platforms has grown 
-        exponentially in the past decade. So far, our results have been fairly accurate at extracting 
-        keyframes from the videos shown above. We used the keyframe annotations in the dataset as the ground 
-        truth keyframes in order to compute the accuracy, recall, precision, and figure of merit 
-        (F-score) score for each method.  Possible routes of improvement might be to expand our datasets 
+        exponentially in the past decade. Our results with both PPC and Color Moment as well as Edge-Aware Clustering show fair accuracy, averaging 44.3% accuracy across both videos. While Edge-Aware Clustering showed a slight improvement in average accuracy, Bommisetty et al. propose that PCC and Color Moment should be the better performer due to the compounding benifits from linear transformation variance. We theorize that this is due to testing on a dataset consiting of 2 videos, if a greater number of videos were tested the improved accuracy of PCC should reveal itself. In both methods, we used the keyframe annotations from the dataset as ground truth keyframes in order to computer the accuracy, recall, precision, and figure of merit (F-score) score for each algorithm. Possible routes of improvement might be to expand our datasets 
         to longer videos to examine any differences in performance. Another idea could be to run our methods 
         on a large selection of smaller videos and run clustering algorithms on the extracted frames to
         attempt classification.
