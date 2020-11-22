@@ -63,6 +63,9 @@ Time: 3:19 PM EDT
         involves detecting the transition between successive shots.
       </p>
       <p>
+        This transition can be represented numerically by comparing different features from consecutive frames. These features vary between different keyframe extraction algorithms and pinpoint different similarities to accurately determine the keyframes for a video.
+      </p>
+      <p>
         We will implement a detection-based keyframe extraction algorithm based on a combination of two 
         features: the Pearson correlation coefficient (PCC) and color moments (CM). The second method we 
         will be using is non-sequential called Edge Aware Clustering, meaning that instead of directly 
@@ -221,21 +224,13 @@ Time: 3:19 PM EDT
         </div>
       </center>
       <p>
-        We tested our first keyframe extraction technique on two videos: the first shows a
-        monkey on a rock (Video 3) and the second presents the view of a city (Video 17). 
-        The dataset we used contained a set of ground-truth 
-        keyframes, to which we compared our results from the extraction method 
-        using four key metrics: accuracy, precision, recall, and F-score.  We defined 
-        accuracy as the sum of the true positives and true negatives over the sum of the true positives, 
-        true negatives, false positives, and false negatives.  With both videos, we found our methods to 
-        have relatively low accuracy, locating the correct keyframes under 50% of the time. Next, we 
-        defined precision as the number of true positives over the sum of the false and true positives.  
-        Our methods were less precise than accurate, with frame precision as low as 25% for the second video.
-        We defined recall as the number of true positives over the sum of true positives and false negatives.
-        Recall was the highest performing metric, indicating that our method did well at identifying 
-        the ground-truth key frames, if not accounting for false positives.  We also evaluated performance 
-        based on “F-score", which is equal to 2 times precision times recall over the sum of precision 
-        and recall. 
+       We tested both of our keyframe extraction techniques on two different videos. The first video depicts a monkey climbing on a rock (Video 3) and the second video shows the view of a city from a distance (Video 17). The dataset we used contained a set of ground-truth keyframes, to which we compared our results from the extraction method using four key metrics: accuracy, precision, recall, and F-score. We defined accuracy as the sum of the true positives and true negatives over the sum of the true positives, true negatives, false positives, and false negatives. 
+      </p>
+      <p>
+        For the first technique, the PCC and Color Moment algorithm, we found our method to have relatively low accuracy for both videos, locating the correct keyframes under 50% of the time. Next, we defined precision as the number of true positives over the sum of the false and true positives. Our methods were less precise than accurate, with frame precision as low as 25% for the second video. We defined recall as the number of true positives over the sum of true positives and false negatives. Recall was the highest performing metric, indicating that our method did well at identifying the ground-truth key frames, if not accounting for false positives. We also evaluated performance based on “F-score", which is equal to 2 times precision times recall over the sum of precision and recall.
+      </p>
+      <p>
+        For the second method, Edge-Aware Clustering the results were just slightly more accurate on average. The accuracy of this algorithm was 42% for the first video and 48% for the second video, still under 50% for both. On average this method was less precise than the first with values of 33.1% and 25.5% respectively. Unlike the first method, the recall of the Edge-Aware algorithm was not the best performing metric with an average of 38% between the two videos. Finally the F-Score of this method was also lower than the first, with a value of 31.9% for the first video and 32.5% for the second video. 
       </p>
     <br>
     <hr class="heavy">
