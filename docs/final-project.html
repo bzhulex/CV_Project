@@ -35,9 +35,9 @@ Time: 3:19 PM EDT
         As the amount of video content available and consumed on social media platforms has grown 
         exponentially in the past decade, so has the necessity for classifying and summarizing videos with 
         high accuracy. The goal of this project is to survey and analyze two state-of-the-art keyframe 
-        extraction techniques using multiple public video datasets and compare their performances. We will 
-        use the keyframe annotations in the dataset as the ground truth keyframes in order to compute 
-        the accuracy, recall, precision, and figure of merit (F-score) score for each method. We expect 
+        extraction techniques using public video datasets to compare their performances. We will 
+        use the keyframe annotations provided in the dataset as the ground truth keyframes in order to compute 
+        the accuracy, recall, precision, and figure of merit score (F-score) for each method. We expect 
         our experiments to show successful keyframe selection by producing good quantitative results 
         and visual representations that accurately summarize each video.
       </p>
@@ -66,12 +66,12 @@ Time: 3:19 PM EDT
         This transition can be represented numerically by comparing different features from consecutive frames. These features vary between different keyframe extraction algorithms and pinpoint different similarities to accurately determine the keyframes for a video.
       </p>
       <p>
-        We will implement a detection-based keyframe extraction algorithm based on a combination of two 
+        The first method we implemented is a detection-based keyframe extraction algorithm based on a combination of two 
         features: the Pearson correlation coefficient (PCC) and color moments (CM). The second method we 
-        will be using is non-sequential called Edge Aware Clustering, meaning that instead of directly 
-        comparing consecutive frames to detect a keyframe, the frames will first be clustered into different 
-        shots (a collection of frames). We will test both of these approaches on color image frames with 
-        differing actions to determine the more accurate methods. 
+        used is non-sequential called Edge-Aware Clustering, meaning that instead of directly 
+        comparing consecutive frames to detect a keyframe, the frames were first clustered into different 
+        shots (a collection of frames). We tested both of these approaches on color image frames with 
+        differing actions to determine the more accurate method. 
       </p>
     <br>
     <hr class="heavy">
@@ -82,8 +82,8 @@ Time: 3:19 PM EDT
       <p>
         The first approach we used exploited Pearson correlation coefficients (PCC) and color moments 
         (CM) based on the research by Bommisetty et al. [2]. The linear transformation invariance property 
-        of PCC facilitates the proposed algorithm to work well under varying lighting conditions. On the 
-        other hand, the scale and rotation invariance properties of color moments are beneficial for 
+        of PCC facilitates the proposed algorithm to work well under varying lighting conditions. Additionally, 
+        the scale and rotation invariance properties of color moments are beneficial for 
         representation of complex objects that may be present in different poses and orientations.
       </p>
       <p>
@@ -109,7 +109,7 @@ Time: 3:19 PM EDT
         </center>
       </p>
       <p>
-        In total, there were three total thresholds, one for each of the three PCC arrays. Using the 
+        In total, there were three thresholds, one for each of the three PCC arrays. Using the 
         thresholds, we found the set of specific video frames that would be used to determine the
         final set of shot boundaries.
       </p>
@@ -159,10 +159,10 @@ Time: 3:19 PM EDT
           a continuity value was determined. After clustering the continuity values for all frames, we used an extraction technique that 
           accounted for cluster sizes as well as visual content variations within a shot.
       </p>
-      <p>To start, we first found the edge pattern ($EP$) of each block according to the equations below, where $Thr$ is equal to 16, 
-        $m$ is the median intensity of the block, and $\delta$ is the maximum intensity value of the block.
+      <p>To start, we first found the edge pattern ($EP$) of each block according to the equations below, where $Thr$ is equal to 16 and
+        $m$, $\bar{x}$, and $\delta$ are the median, mean, and maximum intensities of the block respectively.
       </p>
-      <p class="equation"> $ \varepsilon = \delta - m $ </p>
+      <p class="equation"> $ \varepsilon = \delta - \bar{x} $ </p>
       <p class="equation"> $ EP = \begin{cases} \mbox{1} & \mbox{if } (\varepsilon > Thr \text{&} x_{p} > \bar{x}) \\ \mbox{0} & \mbox{otherwise} \end{cases}$ </p>
       <p>Once the edge patterns for each block were found, we had to classify each one as either an edge or non-edge block. According to 
         Priya and Domnic, a block is an edge block if the number of edge pixels in the edge pattern exceeds
@@ -173,15 +173,15 @@ Time: 3:19 PM EDT
       <p>
         In order to compute the similarity scores, we considered two quantized values to represent a single block:
         a lower mean ($\bar{\alpha}$) and a higher mean ($\bar{\beta}$). The quantized values were computed as follows
-        where $\bar{x}$ is the mean intensity value of the block, $q$ is the number of pixels in the block greater than $\bar{x}$,
-        and $b(x)$ is all of the intensity values of the block.
+        where $q$ is the number of pixels in the block greater than $\bar{x}$, and $b(x)$ is all of the intensity values of the block.
       </p>
       <p class="equation">$ \bar{\alpha} = \frac {1} {16 - q} \sum\limits_{b(x) < \bar{x}} b(x) $</p>
       <p class="equation">$ \bar{\beta} = \frac {1} {q} \sum\limits_{b(x) \geq \bar{x}} b(x) $</p> 
 
       <p>
-        Next, we compared corresponding blocks of consecutive frames using $a$, $b$, and $x$ to represent edge blocks and $\bar{x}$ 
-        and $q'$ to represent non-edge blocks, where $q'$ is the number of edge pixels in the edge pattern. If the corresponding blocks
+        Next, we compared corresponding blocks of consecutive frames using $\bar{\alpha}$, $\bar{\beta}$, and $q$ to represent edge blocks and $\bar{x}$ 
+        and $q'$ to represent non-edge blocks, where 
+        $q'$ is the number of edge pixels in the edge pattern. If the corresponding blocks
         were both edge blocks or both non-edge blocks, then we used the following equations to compute the similarity between them,
         where the difference value of the $jth$ block is denoted as $D_{j}$.
       </p>
@@ -193,8 +193,8 @@ Time: 3:19 PM EDT
          $ D_{j} = 2 \lvert q'_{i, j} - q'_{i+1, j} \rvert \lvert \bar{x}_{i, j} - \bar{x}_{i+1, j} \rvert $
       </p>
       <p>
-        If corresponding blocks between the frame $i$ and $i + 1$ were edge and non-edge blocks, or non-edge and edge blocks 
-        respectively, then the difference value was computed as follows.
+        If corresponding blocks between the frame $i$ and $i + 1$ were edge and non-edge blocks, or non-edge and edge blocks, 
+        then the difference value was computed as follows.
       </p>
       <p class="equation">
         $ D_{j} = \lvert q_{i, j} - q'_{i + 1, j} \rvert \lvert \bar{\alpha}_{i, j} + \bar{\beta}_{i, j} - 2\bar{x}_{i + 1, j} \rvert $
@@ -203,7 +203,7 @@ Time: 3:19 PM EDT
         $ D_{j} = \lvert q'_{i, j} - q_{i + 1, j} \rvert \lvert 2 \bar{x}_{i, j} - (\bar{\alpha}_{i + 1, j} + \bar{\beta}_{i+1, j}) \rvert $
       </p>
       <p>
-       Then, we defined a continuity value ($\lambda$) for all consecutive frames as $\lambda = \sum\limits_{j=1}^{n} D_{j} $
+       Then, we defined a continuity value ($\lambda$) for all pairs of consecutive frames as $\lambda = \sum\limits_{j=1}^{n} D_{j} $
       </p>
       <p>Using the continuity values for the full sequence of frames, we clustered the frames into shots using the method below. </p>
       <center>
@@ -234,7 +234,7 @@ Time: 3:19 PM EDT
         For the first technique, the PCC and Color Moment algorithm, we found our method to have relatively low accuracy for both videos, locating the correct keyframes under 50% of the time. Next, we defined precision as the number of true positives over the sum of the false and true positives. Our methods were less precise than accurate, with frame precision as low as 25% for the second video. We defined recall as the number of true positives over the sum of true positives and false negatives. Recall was the highest performing metric, indicating that our method did well at identifying the ground-truth key frames, if not accounting for false positives. We also evaluated performance based on “F-score", which is equal to 2 times precision times recall over the sum of precision and recall.
       </p>
       <p>
-        For the second method, Edge-Aware Clustering the results were just slightly more accurate on average. The accuracy of this algorithm was 42% for the first video and 48% for the second video, still under 50% for both. On average this method was less precise than the first with values of 33.1% and 25.5% respectively. Unlike the first method, the recall of the Edge-Aware algorithm was not the best performing metric with an average of 38% between the two videos. Finally the F-Score of this method was also lower than the first, with a value of 31.9% for the first video and 32.5% for the second video. 
+        For the second method, Edge-Aware Clustering, the results were just slightly more accurate on average. The accuracy of this algorithm was 42% for the first video and 48% for the second video, still under 50% for both. On average this method was less precise than the first with values of 33.1% and 25.5% respectively. Unlike the first method, the recall of the Edge-Aware algorithm was not the best performing metric with an average of 38% between the two videos. Finally the F-Score of this method was also lower than the first, with a value of 31.9% for the first video and 32.5% for the second video. 
       </p>
     <br>
     <hr class="heavy">
@@ -270,7 +270,7 @@ Time: 3:19 PM EDT
       <p>
         As we discussed earlier, it is necessary to classify and summarize videos with high accuracy, 
         as the amount of video content available and consumed on social media platforms has grown 
-        exponentially in the past decade. Our results with both PPC and Color Moment as well as Edge-Aware Clustering show fair accuracy, averaging 44.3% accuracy across both videos. While Edge-Aware Clustering showed a slight improvement in average accuracy, Bommisetty et al. propose that PCC and Color Moment should be the better performer due to the compounding benifits from linear transformation variance. We theorize that this is due to testing on a dataset consiting of 2 videos, if a greater number of videos were tested the improved accuracy of PCC should reveal itself. In both methods, we used the keyframe annotations from the dataset as ground truth keyframes in order to computer the accuracy, recall, precision, and figure of merit (F-score) score for each algorithm. Possible routes of improvement might be to expand our datasets 
+        exponentially in the past decade. Our results for both PCC and Color Moment as well as Edge-Aware Clustering show fair accuracy, averaging 44.3% accuracy across both videos. While Edge-Aware Clustering showed a slight improvement in average accuracy, Bommisetty et al. propose that PCC and Color Moment should be the better performer due to the compounding benifits from linear transformation variance. We theorize that this is due to testing on a dataset consiting of 2 videos, if a greater number of videos were tested the improved accuracy of PCC should reveal itself. In both methods, we used the keyframe annotations from the dataset as ground truth keyframes in order to compute the accuracy, recall, precision, and F-score for each algorithm. Possible routes of improvement might be to expand our datasets 
         to longer videos to examine any differences in performance. Another idea could be to run our methods 
         on a large selection of smaller videos and run clustering algorithms on the extracted frames to
         attempt classification.
