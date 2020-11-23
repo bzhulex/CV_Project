@@ -8,7 +8,11 @@
 
 
 html {
-    background-color: #8AD9FF;
+    /* blue bg */
+    /* background-color: #8AD9FF; */
+ 
+    /* Gray bg */
+    background-color: #EEEEEE;
     padding: 20px 0;
 }
 
